@@ -2,7 +2,6 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { ImageEntity } from './entities/image.entity';
-import { ProfileEntity } from '../profile/entities/profile.entity';
 import { UserEntity } from '../user/entities/user.entity';
 import { join } from 'path';
 import { readFile, readFileSync } from 'fs';
@@ -17,8 +16,6 @@ export class ImageService {
   constructor(
     @InjectRepository(ImageEntity)
     private imagesRepository: Repository<ImageEntity>,
-    @InjectRepository(ProfileEntity)
-    private profilesRepository: Repository<ProfileEntity>,
     @InjectRepository(UserEntity)
     private usersRepository: Repository<UserEntity>,
     @InjectRepository(EateryEntity)
@@ -59,9 +56,7 @@ export class ImageService {
     filename: string,
     hash: string
   ): Promise<ImageEntity> {
-    var user = await this.usersRepository.findOne(userId, {
-      relations: ['profile'],
-    });
+    var user = await this.usersRepository.findOne(userId);
     var newImage = this.imagesRepository.create({
       user,
       filename,
@@ -70,13 +65,8 @@ export class ImageService {
       type: ImageTypeEnum.PROFILE,
     });
     newImage = await this.imagesRepository.save(newImage);
-    if (user.profile != null) {
-      var profile = await this.profilesRepository.findOne(user.profile.id, {
-        relations: ['image'],
-      });
-      profile.image = newImage;
-      await this.profilesRepository.save(profile);
-    }
+    user.image = newImage;
+    await this.usersRepository.save(user);
     return newImage;
   }
 
@@ -86,9 +76,7 @@ export class ImageService {
     hash: string,
     eateryId: number
   ): Promise<ImageEntity> {
-    var user = await this.usersRepository.findOne(userId, {
-      relations: ['profile'],
-    });
+    var user = await this.usersRepository.findOne(userId);
     var newImage = this.imagesRepository.create({
       user,
       filename,

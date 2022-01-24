@@ -1,6 +1,8 @@
 import { Field, Int, ObjectType } from '@nestjs/graphql';
 import { IsNotEmpty, IsNumber, IsString } from 'class-validator';
+import { CategoryIconPackageEntity } from 'src/eatery/entities/category-icon-package.entity';
 import { EateryEntity } from 'src/eatery/entities/eatery.entity';
+import { FoodEntity } from 'src/eatery/entities/food.entity';
 import { UserEntity } from 'src/user/entities/user.entity';
 import {
   Entity,
@@ -28,9 +30,19 @@ export class ImageEntity {
   user?: UserEntity;
 
   @Field((type) => EateryEntity, { nullable: true })
-  @ManyToOne(() => EateryEntity, (eateries) => eateries.images, { nullable: true })
+  @ManyToOne(() => EateryEntity, (eatery) => eatery.images, { nullable: true })
   @JoinColumn()
-  eateries?: EateryEntity;
+  eatery?: EateryEntity;
+
+  @Field((type) => CategoryIconPackageEntity, { nullable: true })
+  @ManyToOne(() => CategoryIconPackageEntity, (categoryIconPackage) => categoryIconPackage.images, { nullable: true })
+  @JoinColumn()
+  categoryIconPackage?: CategoryIconPackageEntity;
+
+  @Field((type) => FoodEntity, { nullable: true })
+  @ManyToOne(() => FoodEntity, (food) => food.images, { nullable: true })
+  @JoinColumn()
+  food?: FoodEntity;
 
   @Field((type) => Int)
   @IsNotEmpty()

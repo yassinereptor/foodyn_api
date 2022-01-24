@@ -37,7 +37,7 @@ export class EateryEntity {
   sections?: SectionEntity[];
 
   @Field((type) => [ImageEntity], { nullable: true })
-  @OneToMany(() => ImageEntity, (image) => image.eateries, {
+  @OneToMany(() => ImageEntity, (image) => image.eatery, {
     nullable: true,
     cascade: true,
   })
@@ -77,20 +77,15 @@ export class EateryEntity {
   @Column('boolean', { default: false, nullable: true })
   phoneNumberVerified?: boolean;
 
-  @Field((type) => Int, { nullable: true })
-  @IsNumber()
+  @Field({ nullable: true })
+  @IsString()
   @Column({ nullable: true })
-  country?: number;
+  country?: string;
 
   @Field({ nullable: true })
   @IsString()
   @Column({ nullable: true })
   city?: string;
-
-  @Field((type) => Int, { nullable: true })
-  @IsNumber()
-  @Column({ nullable: true })
-  zipCode?: number;
 
   @Field((type) => Float, { nullable: true })
   @IsLatitude()
@@ -101,6 +96,12 @@ export class EateryEntity {
   @IsLongitude()
   @Column('float', { nullable: true })
   posLng?: number;
+
+  @Field((type) => Float, { nullable: true })
+  @IsLatitude()
+  @Column('float', { nullable: true })
+  rate?: number;
+  
 
   @Field((type) => Date)
   @CreateDateColumn()
@@ -123,7 +124,6 @@ export class EateryEntity {
     phoneNumber,
     country,
     city,
-    zipCode,
     posLat,
     posLng,
   ) {
@@ -135,7 +135,6 @@ export class EateryEntity {
     this.phoneNumber = phoneNumber;
     this.country = country;
     this.city = city;
-    this.zipCode = zipCode;
     this.posLat = posLat;
     this.posLng = posLng;
   }

@@ -31,7 +31,7 @@ export class EateryService {
     }
 
     async insertOrUpdateEatery(userId : number, newEatery: EateryEntity): Promise<EateryEntity> {
-        var user = await this.usersRepository.findOne(userId, {relations: ["profile"]});
+        var user = await this.usersRepository.findOne(userId);
         newEatery.user = user;
         return this.eateriesRepository.save(newEatery);
     }

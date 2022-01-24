@@ -3,7 +3,6 @@ import { EateryTypeEntity } from './entities/eatery-type.entity';
 import { UseGuards } from '@nestjs/common';
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { GqlAuthGuard } from 'src/auth/guards/gql-auth.guard';
-import { GetEateryArgs } from './dto/args/get-eatery.args';
 import { InsertOrUpdateEateryInput } from './dto/input/insert-or-update-eatery.input';
 import { EateryService } from './eatery.service';
 import { EateryEntity } from './entities/eatery.entity';
@@ -13,6 +12,7 @@ import { TableService } from './table.service';
 import { SectionEntity } from './entities/section.entity';
 import { CurrentUser } from 'src/auth/decorators/current-user.decorator';
 import { UserEntity } from 'src/user/entities/user.entity';
+import { GetIdArgs } from './dto/args/get-id.args';
 
 @Resolver()
 export class EateryResolver {
@@ -25,7 +25,7 @@ export class EateryResolver {
 
   @Query(() => EateryEntity, { name: 'eatery', nullable: true })
   @UseGuards(GqlAuthGuard)
-  getEatery(@Args() getEateryArgs: GetEateryArgs): Promise<EateryEntity> {
+  getEatery(@Args() getEateryArgs: GetIdArgs): Promise<EateryEntity> {
     return this.eateriesService.findOneEateryById(getEateryArgs.id);
   }
 
@@ -60,7 +60,6 @@ export class EateryResolver {
         insertOrUpdateEateryInput.phoneNumber,
         insertOrUpdateEateryInput.country,
         insertOrUpdateEateryInput.city,
-        insertOrUpdateEateryInput.zipCode,
         insertOrUpdateEateryInput.posLat,
         insertOrUpdateEateryInput.posLng,
       ),

@@ -10,16 +10,19 @@ import {
   OneToOne,
   OneToMany,
   JoinTable,
+  ManyToOne,
 } from 'typeorm';
-import { Field, Int, ObjectType } from '@nestjs/graphql';
-import { IsEmail } from 'class-validator';
+import { Field, Float, Int, ObjectType } from '@nestjs/graphql';
+import { IsEmail, IsLatitude, IsLongitude, IsNotEmpty, IsNumber, IsPhoneNumber, IsString } from 'class-validator';
 import { ImageEntity } from 'src/image/entities/image.entity';
 import { MembershipEntity } from 'src/membership/entities/membership.entity';
-import { ProfileEntity } from 'src/profile/entities/profile.entity';
 import { RecordEntity } from 'src/record/entities/record.entity';
 import { TokenEntity } from 'src/token/entities/token.entity';
 import { UserTypeEnum } from '../types/user-type.enum';
 import { EateryEntity } from 'src/eatery/entities/eatery.entity';
+import { GroupEntity } from './group.entity';
+import { CategoryEntity } from 'src/eatery/entities/category.entity';
+import { FoodEntity } from 'src/eatery/entities/food.entity';
 
 @ObjectType('User')
 @Entity('users')
@@ -32,10 +35,65 @@ export class UserEntity {
   @Column()
   type: UserTypeEnum;
 
-  @Field((type) => ProfileEntity, { nullable: true })
-  @OneToOne(() => ProfileEntity, { nullable: true, cascade: true })
+  @Field((type) => ImageEntity, { nullable: true })
+  @OneToOne(() => ImageEntity, { nullable: true, cascade: true })
   @JoinColumn()
-  profile?: ProfileEntity;
+  image?: ImageEntity;
+
+  @Field({ nullable: true })
+  @IsString()
+  @Column({ nullable: true })
+  fullname?: string;
+
+  @Field()
+  @IsNotEmpty()
+  @IsString()
+  @Column()
+  username: string;
+
+  @Field({ nullable: true })
+  @IsString()
+  @Column({ nullable: true })
+  adresse?: string;
+
+  @Field((type) => Int, { nullable: true })
+  @IsNumber()
+  @Column({ nullable: true })
+  dialCode?: number;
+
+  @Field({ nullable: true })
+  @IsPhoneNumber()
+  @Column({ nullable: true })
+  phoneNumber?: string;
+
+  @Field((type) => Boolean, { nullable: true })
+  @Column('boolean', { default: false, nullable: true })
+  phoneNumberVerified?: boolean;
+
+  @Field({ nullable: true })
+  @IsString()
+  @Column({ nullable: true })
+  country?: string;
+
+  @Field({ nullable: true })
+  @IsString()
+  @Column({ nullable: true })
+  city?: string;
+
+  @Field((type) => Int, { nullable: true })
+  @IsNumber()
+  @Column({ nullable: true })
+  gender?: number;
+
+  @Field((type) => Float, { nullable: true })
+  @IsLatitude()
+  @Column('float', { nullable: true })
+  posLat?: number;
+
+  @Field((type) => Float, { nullable: true })
+  @IsLongitude()
+  @Column('float', { nullable: true })
+  posLng?: number;
 
   @Field((type) => [MembershipEntity], { nullable: true })
   @OneToMany(() => MembershipEntity, (membership) => membership.user, {
@@ -58,6 +116,13 @@ export class UserEntity {
   })
   images?: ImageEntity[];
 
+  @Field((type) => [GroupEntity], { nullable: true })
+  @OneToMany(() => GroupEntity, (group) => group.user, {
+    nullable: true,
+    cascade: true,
+  })
+  groups?: GroupEntity[];
+
   @Field((type) => [TokenEntity], { nullable: true })
   @OneToMany(() => TokenEntity, (token) => token.user, {
     nullable: true,
@@ -71,6 +136,35 @@ export class UserEntity {
     cascade: true,
   })
   eateries?: EateryEntity[];
+
+  @Field((type) => [CategoryEntity], { nullable: true })
+  @OneToMany(() => CategoryEntity, (categories) => categories.user, {
+    nullable: true,
+    cascade: true,
+  })
+  categories?: CategoryEntity[];
+
+  @Field((type) => [FoodEntity], { nullable: true })
+  @OneToMany(() => FoodEntity, (foods) => foods.user, {
+    nullable: true,
+    cascade: true,
+  })
+  foods?: FoodEntity[];
+
+  @Field((type) => GroupEntity, { nullable: true })
+  @ManyToOne(() => GroupEntity, (group) => group.users)
+  group?: GroupEntity;
+
+  @Field((type) => [UserEntity], { nullable: true })
+  @OneToMany(() => UserEntity, (subUser) => subUser.superUser, {
+    nullable: true,
+    cascade: true,
+  })
+  subUsers?: UserEntity[];
+
+  @Field((type) => UserEntity, { nullable: true })
+  @ManyToOne(() => UserEntity, (superUser) => superUser.subUsers)
+  superUser?: UserEntity;
 
   @Field()
   @Column()
@@ -99,4 +193,30 @@ export class UserEntity {
   @Field((type) => Date, { nullable: true })
   @DeleteDateColumn()
   deletedAt?: Date;
+
+  constructor(
+    id,
+    fullname,
+    username,
+    adresse,
+    dialCode,
+    phoneNumber,
+    country,
+    city,
+    gender,
+    posLat,
+    posLng,
+  ) {
+    this.id = id;
+    this.fullname = fullname;
+    this.username = username;
+    this.adresse = adresse;
+    this.dialCode = dialCode;
+    this.phoneNumber = phoneNumber;
+    this.country = country;
+    this.city = city;
+    this.gender = gender;
+    this.posLat = posLat;
+    this.posLng = posLng;
+  }
 }

@@ -2,7 +2,7 @@ import { UseGuards } from '@nestjs/common';
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { title } from 'process';
 import { GqlAuthGuard } from 'src/auth/guards/gql-auth.guard';
-import { GetEateryTypeArgs } from './dto/args/get-eatery-type.args';
+import { GetIdArgs } from './dto/args/get-id.args';
 import { InsertOrUpdateEateryTypeInput } from './dto/input/insert-or-update-eatery-type.input';
 import { EateryTypeService } from './eatery-type.service';
 import { EateryTypeEntity } from './entities/eatery-type.entity';
@@ -13,7 +13,7 @@ export class EateryTypeResolver {
 
   @Query(() => EateryTypeEntity, { name: 'eateryType', nullable: true })
   @UseGuards(GqlAuthGuard)
-  getEateryType(@Args() getEateryTypeArgs: GetEateryTypeArgs): Promise<EateryTypeEntity> {
+  getEateryType(@Args() getEateryTypeArgs: GetIdArgs): Promise<EateryTypeEntity> {
     return this.eateryTypesService.findOneEateryTypeById(getEateryTypeArgs.id);
   }
 

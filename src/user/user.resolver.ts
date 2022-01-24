@@ -27,20 +27,18 @@ import { CurrentUser } from '../auth/decorators/current-user.decorator';
 import { ImageEntity } from '../image/entities/image.entity';
 import { ImageService } from '../image/image.service';
 import { MailService } from '../mail/mail.service';
-import { ProfileEntity } from '../profile/entities/profile.entity';
-import { ProfileService } from '../profile/profile.service';
 import { RecordEntity } from '../record/entities/record.entity';
 import { RecordService } from '../record/record.service';
 import { TokenEntity } from '../token/entities/token.entity';
 import { TokenService } from '../token/token.service';
 import { GqlAuthGuard } from 'src/auth/guards/gql-auth.guard';
 import { TokenTypeEnum } from 'src/token/types/token-type.enum';
+import { UpdateUserInput } from './dto/input/update-user.input';
 
 @Resolver(() => UserEntity)
 export class UserResolver {
   constructor(
     private readonly usersService: UserService,
-    private readonly profilesService: ProfileService,
     private readonly recordsService: RecordService,
     private readonly tokensService: TokenService,
     private readonly imagesService: ImageService,
@@ -97,9 +95,28 @@ export class UserResolver {
     return this.usersService.updateUser(user);
   }
 
-  @ResolveField(() => ProfileEntity)
-  profile(@Parent() user: UserEntity) {
-    return this.profilesService.findOneProfileByUser(user);
+  @Mutation(() => UserEntity)
+  @UseGuards(GqlAuthGuard)
+  updateUser(
+    @CurrentUser() user: UserEntity,
+    @Args('user') updateUserInput: UpdateUserInput,
+  ): Promise<UserEntity> {
+    return this.usersService.updateUserById(
+      user.id,
+      new UserEntity(
+        updateUserInput.id,
+        updateUserInput.fullname,
+        updateUserInput.username,
+        updateUserInput.adresse,
+        updateUserInput.dialCode,
+        updateUserInput.phoneNumber,
+        updateUserInput.country,
+        updateUserInput.city,
+        updateUserInput.gender,
+        updateUserInput.posLat,
+        updateUserInput.posLng,
+      ),
+    );
   }
 
   @ResolveField(() => [RecordEntity])

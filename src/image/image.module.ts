@@ -8,7 +8,6 @@ import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
-import { ProfileModule } from '../profile/profile.module';
 import { UserModule } from '../user/user.module';
 import { EateryModule } from 'src/eatery/eatery.module';
 
@@ -16,7 +15,6 @@ import { EateryModule } from 'src/eatery/eatery.module';
   imports: [
     TypeOrmModule.forFeature([ImageEntity]),
     forwardRef(() => UserModule),
-    forwardRef(() => ProfileModule),
     forwardRef(() => EateryModule),
   ],
   providers: [ImageService, ImageResolver],

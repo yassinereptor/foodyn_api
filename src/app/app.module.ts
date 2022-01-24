@@ -18,7 +18,6 @@ import { CouponModule } from 'src/coupon/coupon.module';
 import { ImageModule } from 'src/image/image.module';
 import { MailModule } from 'src/mail/mail.module';
 import { MembershipModule } from 'src/membership/membership.module';
-import { ProfileModule } from 'src/profile/profile.module';
 import { RecordModule } from 'src/record/record.module';
 import { TokenModule } from 'src/token/token.module';
 import { UserModule } from 'src/user/user.module';
@@ -53,7 +52,6 @@ import { RemoteConfigModule } from 'src/remote-config/remote-config.module';
     MailModule,
     AppConfigModule,
     TokenModule,
-    ProfileModule,
     RecordModule,
     ImageModule,
     MembershipModule,
