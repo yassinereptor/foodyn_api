@@ -11,6 +11,7 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
   const appConfig: AppConfigService = app.get('AppConfigService');
-  await app.listen(appConfig.server.port);
+  const port = process.env.PORT || 3000; //appConfig.server.port
+  await app.listen(port);
 }
 bootstrap();
